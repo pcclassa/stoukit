@@ -100,7 +100,7 @@ function coverBody(p: CalendarProject): HTMLElement {
       <p class="cal-cover__subtitle">${escape(p.subtitle)}</p>
     </div>
     <div class="cal-cover__brand">
-      <img src="./brand/fusbobo-logo.svg" alt="Fus Bobo" />
+      <img src="./brand/fusbobo-logo-white.png" alt="Fus Bobo" />
       <span>www.stouniky.com</span>
     </div>`;
   return body;

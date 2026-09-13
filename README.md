@@ -51,7 +51,7 @@ src/
     editor.ts          UI editoru
     print.ts           tiskový pohled
   styles/              base.css (brand), calendar.css
-public/brand/          pebble.svg (značka), fusbobo-logo.svg (PLACEHOLDER – nahradit skutečným logem)
+public/brand/          pebble.svg (značka), fusbobo-logo.png (hnědá, hlavička), fusbobo-logo-white.png (bílá, obálka)
 ```
 
 ## Vizuální identita
@@ -61,7 +61,7 @@ a Nunito (UI). Tokeny jsou v `src/styles/base.css`.
 
 ## Roadmapa
 
-- [ ] skutečné logo Fus Boba + ukázkové fotky
+- [ ] ukázkové fotky
 - [ ] jmeniny v kalendáriu (volitelně)
 - [ ] přímý export PDF bez tiskového dialogu (pdf-lib), případně PDF/X + CMYK dle tiskárny
 - [ ] hromadná varianta: více kalendářů z jedné sady (personalizované obálky)
