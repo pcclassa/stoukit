@@ -35,6 +35,6 @@ export function homePage(root: HTMLElement): void {
       </a>
     </section>
 
-    <footer class="footer">© Stouníci · Váš fotograf Fus Bobo · www.stouniky.com</footer>`;
+    <footer class="footer">© Stouníci · Fotograf Fus Bobo · www.stouniky.com</footer>`;
   renderShell(root, main);
 }

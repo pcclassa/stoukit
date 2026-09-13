@@ -11,7 +11,7 @@ export function renderShell(root: HTMLElement, content: HTMLElement): void {
       </span>
     </a>
     <a class="photographer" href="https://stouniky.com" target="_blank" rel="noopener">
-      <span class="photographer__label">Váš fotograf</span>
+      <span class="photographer__label">Fotograf</span>
       <img class="photographer__logo" src="./brand/fusbobo-logo.png" alt="Fus Bobo – logo fotografa" />
     </a>`;
   root.append(topbar, content);

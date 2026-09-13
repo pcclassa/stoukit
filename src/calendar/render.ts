@@ -156,7 +156,7 @@ function monthBody(p: CalendarProject, slot: Slot): HTMLElement {
 
   const foot = document.createElement('div');
   foot.className = 'cal-foot';
-  foot.innerHTML = `<span>Stouníci · usměvavé kamínky</span><span>Váš fotograf Fus Bobo · www.stouniky.com</span>`;
+  foot.innerHTML = `<span>Stouníci · usměvavé kamínky</span><span>Fotograf Fus Bobo · www.stouniky.com</span>`;
   body.append(foot);
   return body;
 }
