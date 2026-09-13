@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <!-- usměvavý kamínek – jednoduchá značka toolkitu -->
+  <path d="M8 38c-1-12 8-24 24-25s26 9 25 22-11 21-26 21S9 50 8 38z" fill="#b08d6a"/>
+  <path d="M12 36c0-9 7-18 20-19s21 7 20 17-9 15-21 15S12 45 12 36z" fill="#c9a27c"/>
+  <circle cx="24" cy="34" r="3" fill="#2f2217"/>
+  <circle cx="40" cy="34" r="3" fill="#2f2217"/>
+  <path d="M22 42c4 5 16 5 20 0" fill="none" stroke="#2f2217" stroke-width="3" stroke-linecap="round"/>
+</svg>
