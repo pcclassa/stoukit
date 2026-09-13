@@ -96,7 +96,7 @@
 }
 
 .cal-cover__subtitle {
-  font-family: var(--font-head);
+  font-family: var(--font-ui);
   font-style: italic;
   font-size: 9mm;
   margin: 4mm 0 0;
@@ -108,7 +108,8 @@
   align-items: flex-end;
   justify-content: space-between;
   margin-top: 12mm;
-  font-size: 5mm;
+  font-family: var(--font-mono);
+  font-size: 4.5mm;
   letter-spacing: 0.1em;
   color: rgba(255, 255, 255, 0.85);
 }
@@ -150,7 +151,7 @@
 
 .cal-caption {
   margin-left: auto;
-  font-family: var(--font-head);
+  font-family: var(--font-ui);
   font-style: italic;
   font-size: 6mm;
   color: var(--brown-500);
@@ -167,8 +168,9 @@
 }
 
 .cal-grid th {
-  font-weight: 800;
-  font-size: 4.2mm;
+  font-family: var(--font-mono);
+  font-weight: 500;
+  font-size: 4mm;
   letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--brown-300);
@@ -216,8 +218,9 @@
 
 .cal-grid .cal-wk {
   width: 9%;
-  font-size: 3.8mm;
-  font-weight: 700;
+  font-family: var(--font-mono);
+  font-size: 3.6mm;
+  font-weight: 500;
   color: var(--brown-300);
   border-right: 0.2mm solid rgba(74, 55, 38, 0.15);
 }
@@ -242,7 +245,8 @@
 .cal-foot {
   display: flex;
   justify-content: space-between;
-  font-size: 3.4mm;
+  font-family: var(--font-mono);
+  font-size: 3.2mm;
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--brown-300);
@@ -289,27 +293,27 @@
 }
 
 .panel {
-  background: var(--white);
-  border: 1px solid var(--line);
+  background: var(--card-bg);
+  border: var(--card-border);
   border-radius: var(--radius);
-  padding: 20px;
+  padding: 22px;
   display: flex;
   flex-direction: column;
   gap: 14px;
-  box-shadow: var(--shadow);
+  box-shadow: var(--card-shadow);
 }
 
 .panel h2 {
-  font-size: 20px;
+  font-size: 1.45rem;
 }
 
 .panel h3 {
-  font-size: 13px;
-  font-family: var(--font-ui);
-  font-weight: 800;
-  letter-spacing: 0.1em;
+  font-size: 0.7rem;
+  font-family: var(--font-mono);
+  font-weight: 500;
+  letter-spacing: 0.18em;
   text-transform: uppercase;
-  color: var(--brown-300);
+  color: var(--brown-400);
   margin-top: 6px;
 }
 
@@ -356,8 +360,8 @@
   position: relative;
   aspect-ratio: 297 / 420;
   border-radius: 8px;
-  border: 2px solid transparent;
-  background: var(--sand-100);
+  border: 1.5px solid var(--ink);
+  background: var(--cream);
   overflow: hidden;
   cursor: pointer;
   padding: 0;
@@ -388,8 +392,9 @@
   left: 0;
   right: 0;
   bottom: 0;
-  font-size: 10px;
-  font-weight: 800;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 500;
   text-align: center;
   padding: 2px;
   background: rgba(250, 246, 238, 0.85);
@@ -412,7 +417,8 @@
   width: 100%;
   overflow: hidden;
   border-radius: var(--radius);
-  box-shadow: var(--shadow);
+  border: var(--card-border);
+  box-shadow: var(--card-shadow);
   background: var(--sand-200);
 }
 
@@ -429,11 +435,13 @@
 }
 
 .dropzone {
-  border: 2px dashed var(--brown-300);
+  display: block;
+  border: 1.5px dashed var(--ink);
   border-radius: var(--radius-sm);
   padding: 14px;
   text-align: center;
-  color: var(--brown-500);
+  background: var(--card-bg);
+  color: var(--brown-700);
   font-size: 14px;
   cursor: pointer;
 }
@@ -450,13 +458,15 @@
 
 .hint {
   font-size: 13px;
-  color: var(--brown-300);
+  color: var(--cream-50);
+  text-shadow: 0 1px 4px rgba(25, 18, 10, 0.55);
   margin: 0;
 }
 
 .warn {
   font-size: 13px;
-  color: var(--danger);
+  color: #ffd9d3;
+  text-shadow: 0 1px 4px rgba(25, 18, 10, 0.7);
   margin: 0;
 }
 
@@ -510,4 +520,9 @@
     page-break-after: auto;
     break-after: auto;
   }
+}
+
+.panel .hint {
+  color: var(--text-muted);
+  text-shadow: none;
 }

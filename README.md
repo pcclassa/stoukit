@@ -51,13 +51,15 @@ src/
     editor.ts          UI editoru
     print.ts           tiskový pohled
   styles/              base.css (brand), calendar.css
-public/brand/          pebble.svg (značka), fusbobo-logo.png (hnědá, hlavička), fusbobo-logo-white.png (bílá, obálka)
+public/brand/          pebble.svg (značka), fusbobo-logo*.png (logo hnědé/bílé), fusbobo-figura.webp, uska.webp, pozadi.jpg, ukazka-*.jpg
 ```
 
 ## Vizuální identita
 
-Převzato z webu stouniky.com: teplá hnědá `#4A3726`, krémový papír, měkké zaoblení; písma Fraunces (nadpisy)
-a Nunito (UI). Tokeny jsou v `src/styles/base.css`.
+Převzato 1:1 z webu stouniky.com (repo `pcclassa/stouniky.com`): rozostřené kamínky na pozadí, krémové karty
+`#EFE5CD` s rámečkem `#1F1D1A`, hnědá `#4A3626`, gradientový rám okna; písma Bricolage Grotesque (nadpisy),
+IBM Plex Sans (text), IBM Plex Mono (štítky, tlačítka), Pacifico (skript). Tokeny jsou v `src/styles/base.css`,
+obrázky (pozadí, Ůska, figura Fus Boba, ukázky) v `public/brand/`.
 
 ## Roadmapa
 

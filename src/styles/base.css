@@ -1,37 +1,60 @@
 /* ------------------------------------------------------------------
    Stouniky product toolkit – základní vzhled
-   Barvy a nálada převzaté z webu stouniky.com: teplá hnědá (#4A3726),
-   krémový papír, měkké zaoblení, hravý, klidný tón.
+   Převzato 1:1 z webu stouniky.com (repo pcclassa/stouniky.com):
+   rozostřené kamínky na pozadí, krémové karty s inkoustovým rámečkem,
+   písma Bricolage Grotesque / IBM Plex Sans / IBM Plex Mono / Pacifico,
+   gradientový rám okolo okna.
    ------------------------------------------------------------------ */
 :root {
-  --brown-900: #2f2217;
-  --brown-700: #4a3726; /* theme color webu */
-  --brown-500: #7a5c3f;
-  --brown-300: #b08d6a;
-  --sand-200: #e8d9c2;
-  --sand-100: #f3eadb;
-  --paper: #faf6ee;
-  --white: #fffdf9;
-  --smile: #d98b3a; /* úsměv kamínku */
-  --moss: #6e7f4c;
-  --sky: #8fb3c9;
-  --danger: #b0413e;
+  color-scheme: only light;
 
-  --ink: var(--brown-900);
-  --ink-soft: var(--brown-500);
-  --line: rgba(74, 55, 38, 0.16);
-  --shadow: 0 6px 24px rgba(74, 55, 38, 0.12);
-  --radius: 18px;
+  --ink: #1f1d1a; /* rámečky, nadpisy */
+  --text: #2e2a23;
+  --text-soft: #4a463f;
+  --text-muted: #5a5347;
+  --brown-900: #3e2c1c;
+  --brown-700: #4a3626; /* theme color webu */
+  --brown-500: #6b4e32;
+  --brown-400: #7a5c36;
+  --gold-600: #8a6b3f;
+  --gold-500: #b98a4e;
+  --gold-300: #c9a87a;
+  --cream: #efe5cd; /* karty */
+  --cream-100: #f3ead5;
+  --cream-50: #f0e6ce;
+  --stone: #6e675c; /* pozadí pod texturou */
+  --danger: #a3372f;
+  --moss: #5e6b3f;
+
+  --card-bg: rgba(239, 229, 205, 0.96);
+  --card-border: 1.5px solid var(--ink);
+  --card-shadow: 0 20px 48px rgba(25, 18, 10, 0.34);
+  --radius: 16px;
   --radius-sm: 10px;
 
-  --font-head: 'Fraunces', Georgia, 'Times New Roman', serif;
-  --font-ui: 'Nunito', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-head: 'Bricolage Grotesque', 'Helvetica Neue', Arial, sans-serif;
+  --font-ui: 'IBM Plex Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-mono: 'IBM Plex Mono', ui-monospace, 'SFMono-Regular', Menlo, monospace;
+  --font-script: 'Pacifico', cursive;
+
+  /* aliasy pro kalendář */
+  --paper: var(--cream-100);
+  --white: #fffdf7;
+  --sand-100: #e9dfc6;
+  --sand-200: #dccfae;
+  --brown-300: var(--gold-600);
+  --line: rgba(31, 29, 26, 0.18);
+  --smile: var(--gold-500);
 }
 
 *,
 *::before,
 *::after {
   box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
 }
 
 html,
@@ -43,10 +66,30 @@ body {
 body {
   font-family: var(--font-ui);
   font-size: 16px;
-  line-height: 1.5;
-  color: var(--ink);
-  background: var(--paper)
-    radial-gradient(1200px 500px at 10% -10%, rgba(232, 217, 194, 0.7), transparent 60%);
+  line-height: 1.65;
+  color: var(--text);
+  background: var(--stone);
+}
+
+/* rozostřené kamínky – stejně jako web (obrázek vkládá shell.ts, kvůli relativní base) */
+.backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  background: var(--stone);
+}
+
+/* gradientový rám okolo okna */
+.frame {
+  position: fixed;
+  inset: 0;
+  z-index: 8;
+  pointer-events: none;
+  border: 5px solid transparent;
+  border-image: linear-gradient(180deg, #3e2c1c 0%, #6b4e32 45%, #c9a87a 100%) 1;
 }
 
 a {
@@ -65,63 +108,66 @@ h1,
 h2,
 h3 {
   font-family: var(--font-head);
-  font-weight: 600;
+  font-weight: 700;
   line-height: 1.15;
   margin: 0;
-  color: var(--brown-700);
+  color: var(--brown-900);
+  letter-spacing: -0.01em;
 }
 
-/* ---------- Hlavička (hero vlevo, logo fotografa vpravo) ---------- */
+/* ---------- Lišta: hero vlevo, fotograf vpravo ---------- */
 .topbar {
   position: sticky;
   top: 0;
-  z-index: 20;
+  z-index: 9;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 16px;
-  padding: 14px clamp(16px, 4vw, 40px);
-  background: rgba(250, 246, 238, 0.85);
-  backdrop-filter: blur(10px);
-  border-bottom: 1px solid var(--line);
+  padding: 10px clamp(14px, 4vw, 28px);
+  background: rgba(239, 229, 205, 0.94);
+  backdrop-filter: blur(8px);
+  border-bottom: var(--card-border);
 }
 
 .hero {
   display: flex;
   align-items: center;
-  gap: 14px;
+  gap: 12px;
   text-decoration: none;
   color: inherit;
+  min-width: 0;
 }
 
 .hero__mark {
-  width: 44px;
-  height: 44px;
+  width: 40px;
+  height: 40px;
   flex: none;
 }
 
 .hero__title {
+  display: block;
   font-family: var(--font-head);
-  font-size: clamp(20px, 2.4vw, 28px);
+  font-size: clamp(18px, 2.2vw, 24px);
   font-weight: 700;
-  color: var(--brown-700);
+  color: var(--ink);
   letter-spacing: -0.01em;
+  line-height: 1.1;
+  white-space: nowrap;
 }
 
 .hero__title em {
-  font-style: italic;
-  font-weight: 400;
+  font-style: normal;
   color: var(--brown-500);
 }
 
 .hero__sub {
   display: block;
-  font-family: var(--font-ui);
-  font-size: 12px;
-  font-weight: 700;
-  letter-spacing: 0.14em;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.18em;
   text-transform: uppercase;
-  color: var(--brown-300);
+  color: var(--brown-400);
 }
 
 .photographer {
@@ -129,30 +175,35 @@ h3 {
   align-items: center;
   gap: 10px;
   text-decoration: none;
-  color: var(--brown-500);
+  color: var(--brown-700);
+  flex: none;
 }
 
+/* pilulka jako u figury Fus Boba na webu */
 .photographer__label {
-  text-align: right;
-  font-size: 12px;
-  line-height: 1.25;
-}
-
-.photographer__label strong {
-  display: block;
-  font-family: var(--font-head);
-  font-size: 16px;
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.04em;
+  background: rgba(239, 229, 205, 0.95);
+  border: 1px solid var(--ink);
+  border-radius: 999px;
+  padding: 4px 12px;
   color: var(--brown-700);
 }
 
 .photographer__logo {
-  height: 56px;
+  height: 46px;
   width: auto;
+  display: block;
 }
 
-@media (max-width: 560px) {
+@media (max-width: 640px) {
   .photographer__label {
     display: none;
+  }
+
+  .hero__title {
+    font-size: 17px;
   }
 }
 
@@ -160,25 +211,72 @@ h3 {
 .page {
   max-width: 1200px;
   margin: 0 auto;
-  padding: clamp(20px, 4vw, 48px) clamp(16px, 4vw, 40px) 80px;
+  padding: clamp(28px, 5vw, 56px) clamp(14px, 4vw, 28px) 190px;
+  display: flex;
+  flex-direction: column;
+  gap: 26px;
+}
+
+.card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 30px 32px 26px;
+  background: var(--card-bg);
+  border: var(--card-border);
+  border-radius: var(--radius);
+  box-shadow: var(--card-shadow);
+  text-decoration: none;
+  color: var(--text);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+a.card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 26px 56px rgba(25, 18, 10, 0.42);
+}
+
+.card--soon {
+  opacity: 0.78;
+  pointer-events: none;
+}
+
+.card--intro {
+  text-align: center;
+  align-items: center;
+  max-width: 680px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.card--intro h1 {
+  font-size: clamp(2.1rem, 6.5vw, 3rem);
+  color: var(--ink);
+}
+
+.tagline {
+  font-family: var(--font-mono);
+  font-size: 0.76rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--brown-400);
 }
 
 .quote {
-  font-family: var(--font-head);
   font-style: italic;
-  font-size: clamp(18px, 2.2vw, 24px);
-  color: var(--brown-500);
-  max-width: 44ch;
-  margin: 0 0 36px;
+  font-size: 1.06rem;
+  color: var(--text-soft);
+  max-width: 30em;
+  margin: 12px auto 0;
 }
 
 .quote small {
   display: block;
-  font-family: var(--font-ui);
   font-style: normal;
-  font-size: 13px;
-  margin-top: 6px;
-  color: var(--brown-300);
+  font-size: 0.8rem;
+  margin-top: 8px;
+  color: var(--gold-600);
 }
 
 .products {
@@ -187,71 +285,72 @@ h3 {
   gap: 20px;
 }
 
-.card {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  padding: 26px 26px 22px;
-  background: var(--white);
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
-  box-shadow: var(--shadow);
-  text-decoration: none;
-  color: inherit;
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
-}
-
-.card:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 12px 32px rgba(74, 55, 38, 0.18);
-}
-
-.card--soon {
-  opacity: 0.72;
-  pointer-events: none;
-}
-
 .card__num {
-  font-family: var(--font-head);
-  font-size: 48px;
-  line-height: 1;
-  color: var(--sand-200);
-  font-weight: 700;
+  font-family: var(--font-mono);
+  font-size: 0.76rem;
+  letter-spacing: 0.18em;
+  color: var(--brown-400);
 }
 
 .card h2 {
-  font-size: 24px;
+  font-size: 1.45rem;
 }
 
 .card p {
   margin: 0;
-  color: var(--ink-soft);
+  color: var(--text);
+  hyphens: auto;
 }
 
 .card__cta {
   margin-top: auto;
-  font-weight: 800;
-  color: var(--smile);
+  padding-top: 8px;
+  font-family: var(--font-mono);
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--brown-700);
 }
 
 .badge {
   position: absolute;
-  top: 18px;
-  right: 18px;
-  font-size: 11px;
-  font-weight: 800;
+  top: 16px;
+  right: 16px;
+  font-family: var(--font-mono);
+  font-size: 0.66rem;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  padding: 4px 10px;
+  padding: 3px 10px;
   border-radius: 999px;
-  background: var(--sand-100);
-  color: var(--brown-500);
+  border: 1px solid var(--ink);
+  background: var(--cream-100);
+  color: var(--brown-700);
 }
 
 .badge--live {
-  background: rgba(110, 127, 76, 0.15);
-  color: var(--moss);
+  background: var(--brown-700);
+  color: var(--cream-100);
+}
+
+/* figura Fus Boba vpravo dole – jen na rozcestníku */
+.bobo-fig {
+  position: fixed;
+  z-index: 3;
+  pointer-events: none;
+  bottom: -6px;
+  right: 6px;
+  margin: 0;
+}
+
+.bobo-fig img {
+  width: clamp(110px, 17vw, 210px);
+  display: block;
+  filter: drop-shadow(0 10px 18px rgba(25, 18, 10, 0.45));
+}
+
+@media (max-width: 900px) {
+  .bobo-fig {
+    display: none;
+  }
 }
 
 /* ---------- Tlačítka a formuláře ---------- */
@@ -259,33 +358,36 @@ h3 {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  padding: 10px 18px;
-  border-radius: 999px;
+  padding: 11px 20px;
+  border-radius: var(--radius-sm);
   border: 1px solid var(--brown-700);
   background: var(--brown-700);
-  color: var(--white);
-  font-weight: 700;
+  color: var(--cream-100);
+  font-family: var(--font-mono);
+  font-size: 0.9rem;
+  font-weight: 500;
   cursor: pointer;
   text-decoration: none;
   transition: background 0.15s ease;
 }
 
 .btn:hover {
-  background: var(--brown-900);
+  background: var(--brown-500);
 }
 
 .btn--ghost {
   background: transparent;
   color: var(--brown-700);
+  border-color: var(--ink);
 }
 
 .btn--ghost:hover {
-  background: var(--sand-100);
+  background: rgba(31, 29, 26, 0.06);
 }
 
 .btn--small {
   padding: 6px 12px;
-  font-size: 14px;
+  font-size: 0.78rem;
 }
 
 .btn:disabled {
@@ -297,28 +399,35 @@ h3 {
   display: flex;
   flex-direction: column;
   gap: 6px;
-  font-size: 14px;
-  font-weight: 700;
-  color: var(--brown-500);
+  font-family: var(--font-mono);
+  font-size: 0.74rem;
+  letter-spacing: 0.04em;
+  color: var(--brown-700);
 }
 
 .field input,
 .field select {
   padding: 8px 12px;
   border-radius: var(--radius-sm);
-  border: 1px solid var(--line);
+  border: 1px solid var(--ink);
   background: var(--white);
-  font-weight: 400;
+  font-family: var(--font-ui);
+  font-size: 0.95rem;
+  color: var(--text);
 }
 
 .muted {
-  color: var(--brown-300);
-  font-size: 14px;
+  color: var(--text-muted);
+  font-size: 0.86rem;
 }
 
 .footer {
   text-align: center;
-  padding: 40px 16px;
-  font-size: 13px;
-  color: var(--brown-300);
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  line-height: 1.9;
+  letter-spacing: 0.06em;
+  color: var(--cream-50);
+  text-shadow: 0 1px 4px rgba(25, 18, 10, 0.55);
+  padding-bottom: 8px;
 }
