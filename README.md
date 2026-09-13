@@ -19,7 +19,7 @@ npm run build      # typecheck + produkční build do dist/
 npm run preview    # náhled buildu
 ```
 
-Čistě statická aplikace bez backendu – jde nasadit na GitHub Pages nebo otevřít lokálně.
+Čistě statická aplikace bez backendu. Nasazení na GitHub Pages: `./deploy.sh` (build → branch `gh-pages`), běží na https://pcclassa.github.io/stoukit/
 Fotky zůstávají v prohlížeči (IndexedDB), nastavení projektu v localStorage.
 
 ## Kalendář – jak to funguje
