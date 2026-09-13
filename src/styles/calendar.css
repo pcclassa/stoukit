@@ -1,0 +1,514 @@
+/* ------------------------------------------------------------------
+   Kalendář: strana v mm (sdílené pro náhled i tisk) + editor
+   ------------------------------------------------------------------ */
+
+/* ---------- Arch a strana ---------- */
+.cal-sheet {
+  position: relative;
+  background: #fff;
+  overflow: hidden;
+  font-family: var(--font-ui);
+  color: var(--brown-900);
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+
+.cal-page {
+  position: absolute;
+  overflow: hidden;
+  background: #fff;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ořez v náhledu */
+.cal-trim {
+  position: absolute;
+  inset: var(--bleed);
+  border: 0.3mm dashed rgba(217, 139, 58, 0.6);
+  pointer-events: none;
+}
+
+.cal-marks i {
+  position: absolute;
+  background: #000;
+  display: block;
+}
+
+/* fotka */
+.cal-photo {
+  position: relative;
+  flex: 0 0 auto;
+  overflow: hidden;
+  background: var(--sand-100);
+}
+
+.cal-page--month .cal-photo {
+  height: 64%;
+}
+
+.cal-page--cover .cal-photo {
+  position: absolute;
+  inset: 0;
+  height: 100%;
+}
+
+.cal-photo img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.cal-photo--empty {
+  display: grid;
+  place-items: center;
+  text-align: center;
+  font-family: var(--font-head);
+  font-size: 14mm;
+  color: var(--brown-300);
+}
+
+.cal-photo--empty small {
+  font-family: var(--font-ui);
+  font-size: 5mm;
+}
+
+/* ---------- Obálka ---------- */
+.cal-cover {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: calc(var(--bleed) + 18mm);
+  background: linear-gradient(to top, rgba(47, 34, 23, 0.72) 0%, rgba(47, 34, 23, 0.25) 35%, transparent 60%);
+  color: #fff;
+}
+
+.cal-cover__title {
+  font-family: var(--font-head);
+  font-weight: 700;
+  font-size: 30mm;
+  line-height: 1;
+  color: #fff;
+  letter-spacing: -0.01em;
+}
+
+.cal-cover__subtitle {
+  font-family: var(--font-head);
+  font-style: italic;
+  font-size: 9mm;
+  margin: 4mm 0 0;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.cal-cover__brand {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  margin-top: 12mm;
+  font-size: 5mm;
+  letter-spacing: 0.1em;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.cal-cover__brand img {
+  height: 22mm;
+  filter: brightness(0) invert(1);
+}
+
+/* ---------- Kalendárium ---------- */
+.cal-body {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  padding: 8mm calc(var(--bleed) + 14mm) calc(var(--bleed) + 8mm);
+  gap: 4mm;
+}
+
+.cal-head {
+  display: flex;
+  align-items: baseline;
+  gap: 6mm;
+}
+
+.cal-month {
+  font-family: var(--font-head);
+  font-weight: 700;
+  font-size: 26mm;
+  line-height: 1;
+  color: var(--brown-700);
+  letter-spacing: -0.02em;
+}
+
+.cal-year {
+  font-family: var(--font-head);
+  font-weight: 400;
+  font-size: 14mm;
+  color: var(--brown-300);
+}
+
+.cal-caption {
+  margin-left: auto;
+  font-family: var(--font-head);
+  font-style: italic;
+  font-size: 6mm;
+  color: var(--brown-500);
+  text-align: right;
+  max-width: 45%;
+}
+
+.cal-grid {
+  flex: 1 1 auto;
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+  font-size: 7.5mm;
+}
+
+.cal-grid th {
+  font-weight: 800;
+  font-size: 4.2mm;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--brown-300);
+  padding: 0 0 1.5mm;
+  border-bottom: 0.4mm solid var(--brown-700);
+  text-align: center;
+}
+
+.cal-grid td {
+  text-align: center;
+  vertical-align: middle;
+  font-weight: 600;
+  border-bottom: 0.2mm solid rgba(74, 55, 38, 0.15);
+}
+
+.cal-grid td.is-out span {
+  color: rgba(74, 55, 38, 0.22);
+  font-weight: 400;
+}
+
+.cal-grid .is-sun {
+  color: var(--danger);
+}
+
+.cal-grid .is-sat {
+  color: var(--brown-500);
+}
+
+.cal-grid td.is-holiday span {
+  color: var(--danger);
+  position: relative;
+}
+
+.cal-grid td.is-holiday span::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  bottom: -2mm;
+  width: 1.4mm;
+  height: 1.4mm;
+  border-radius: 50%;
+  background: var(--danger);
+  transform: translateX(-50%);
+}
+
+.cal-grid .cal-wk {
+  width: 9%;
+  font-size: 3.8mm;
+  font-weight: 700;
+  color: var(--brown-300);
+  border-right: 0.2mm solid rgba(74, 55, 38, 0.15);
+}
+
+.cal-grid th.cal-wk {
+  border-bottom-color: var(--brown-700);
+}
+
+.cal-holidays {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1mm 6mm;
+  font-size: 3.6mm;
+  color: var(--brown-500);
+}
+
+.cal-holidays b {
+  color: var(--danger);
+  font-weight: 800;
+}
+
+.cal-foot {
+  display: flex;
+  justify-content: space-between;
+  font-size: 3.4mm;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--brown-300);
+}
+
+/* landscape – užší kalendárium, menší písma */
+.cal-sheet--landscape .cal-page--month .cal-photo {
+  height: 60%;
+}
+
+.cal-sheet--landscape .cal-month {
+  font-size: 20mm;
+}
+
+.cal-sheet--landscape .cal-year {
+  font-size: 11mm;
+}
+
+.cal-sheet--landscape .cal-grid {
+  font-size: 6mm;
+}
+
+.cal-sheet--landscape .cal-body {
+  padding-top: 5mm;
+  gap: 2.5mm;
+}
+
+.cal-sheet--landscape .cal-cover__title {
+  font-size: 26mm;
+}
+
+/* ---------- Editor ---------- */
+.cal-editor {
+  display: grid;
+  grid-template-columns: 300px minmax(0, 1fr);
+  gap: 24px;
+  align-items: start;
+}
+
+@media (max-width: 900px) {
+  .cal-editor {
+    grid-template-columns: 1fr;
+  }
+}
+
+.panel {
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  box-shadow: var(--shadow);
+}
+
+.panel h2 {
+  font-size: 20px;
+}
+
+.panel h3 {
+  font-size: 13px;
+  font-family: var(--font-ui);
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--brown-300);
+  margin-top: 6px;
+}
+
+.field--row {
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.field--row input[type='checkbox'] {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--brown-700);
+}
+
+.field input[type='range'] {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  accent-color: var(--smile);
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+/* pás slotů */
+.slots {
+  display: grid;
+  grid-template-columns: repeat(13, minmax(0, 1fr));
+  gap: 6px;
+}
+
+@media (max-width: 900px) {
+  .slots {
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+  }
+}
+
+.slot {
+  position: relative;
+  aspect-ratio: 297 / 420;
+  border-radius: 8px;
+  border: 2px solid transparent;
+  background: var(--sand-100);
+  overflow: hidden;
+  cursor: pointer;
+  padding: 0;
+}
+
+.slot--landscape {
+  aspect-ratio: 420 / 297;
+}
+
+.slot img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.slot.is-active {
+  border-color: var(--smile);
+  box-shadow: 0 0 0 3px rgba(217, 139, 58, 0.25);
+}
+
+.slot.is-dragover {
+  border-color: var(--moss);
+}
+
+.slot__label {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  font-size: 10px;
+  font-weight: 800;
+  text-align: center;
+  padding: 2px;
+  background: rgba(250, 246, 238, 0.85);
+  color: var(--brown-700);
+}
+
+.slot__warn {
+  position: absolute;
+  top: 3px;
+  right: 3px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--danger);
+}
+
+/* náhled strany – škálovaný arch */
+.preview {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  background: var(--sand-200);
+}
+
+.preview .cal-sheet {
+  position: absolute;
+  left: 0;
+  top: 0;
+  transform-origin: 0 0;
+}
+
+.preview.is-dragover {
+  outline: 3px dashed var(--moss);
+  outline-offset: -6px;
+}
+
+.dropzone {
+  border: 2px dashed var(--brown-300);
+  border-radius: var(--radius-sm);
+  padding: 14px;
+  text-align: center;
+  color: var(--brown-500);
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.dropzone:hover,
+.dropzone.is-dragover {
+  background: var(--sand-100);
+  border-color: var(--moss);
+}
+
+.dropzone input {
+  display: none;
+}
+
+.hint {
+  font-size: 13px;
+  color: var(--brown-300);
+  margin: 0;
+}
+
+.warn {
+  font-size: 13px;
+  color: var(--danger);
+  margin: 0;
+}
+
+/* ---------- Tiskový výstup ---------- */
+.print-root {
+  background: #777;
+  padding: 10mm;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10mm;
+}
+
+.print-toolbar {
+  position: fixed;
+  top: 12px;
+  right: 12px;
+  z-index: 10;
+  display: flex;
+  gap: 8px;
+  background: rgba(250, 246, 238, 0.95);
+  padding: 10px;
+  border-radius: 999px;
+  box-shadow: var(--shadow);
+}
+
+@media print {
+  body {
+    background: #fff !important;
+  }
+
+  .print-toolbar,
+  .topbar {
+    display: none !important;
+  }
+
+  .print-root {
+    background: none;
+    padding: 0;
+    gap: 0;
+    display: block;
+  }
+
+  .print-root .cal-sheet {
+    page-break-after: always;
+    break-after: page;
+    margin: 0;
+  }
+
+  .print-root .cal-sheet:last-child {
+    page-break-after: auto;
+    break-after: auto;
+  }
+}
