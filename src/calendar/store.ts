@@ -7,7 +7,7 @@ import { get, set, del, keys } from 'idb-keyval';
 export type Orientation = 'portrait' | 'landscape';
 
 /** Čím se vyplní plocha kolem fotky, když je zmenšená pod plný formát. */
-export type PhotoFill = 'blur' | 'color' | 'white';
+export type PhotoFill = 'blur' | 'color' | 'page' | 'white';
 
 export interface Slot {
   /** 0 = obálka, 1–12 = měsíce */
@@ -48,6 +48,8 @@ export interface CalendarProject {
   showHolidayNames: boolean;
   /** výplň plochy kolem zmenšené fotky */
   photoFill: PhotoFill;
+  /** barva podkladu celého listu (kalendárium i plocha kolem fotky) */
+  pageColor: string;
   slots: Slot[];
   print: PrintSettings;
   updatedAt: number;
@@ -70,7 +72,8 @@ export function defaultProject(): CalendarProject {
     subtitle: 'dvanáct měsíců ze života usměvavých kamínků',
     showWeekNumbers: true,
     showHolidayNames: true,
-    photoFill: 'blur',
+    photoFill: 'page',
+    pageColor: '#ffffff',
     slots: Array.from({ length: 13 }, (_, i) => ({ index: i, posX: 50, posY: 50, zoom: 1 })),
     print: { bleed: 3, cropMarks: true, bindingMargin: 12 },
     updatedAt: Date.now(),

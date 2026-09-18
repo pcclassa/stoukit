@@ -29,12 +29,23 @@ Fotky zůstávají v prohlížeči (IndexedDB), nastavení projektu v localStora
 3. **Generovat tiskové PDF** – otevře se tiskový pohled se všemi 13 stranami. V dialogu prohlížeče
    zvolit *Uložit jako PDF*, okraje *Žádné*, *Grafika na pozadí* zapnuto.
 
+### Barva podkladu listu (od 1.2)
+
+*Barva podkladu listu* nastaví barvu celé strany – kalendária i plochy kolem fotky. Vybírá se pipetou
+nebo z připravených odstínů papíru (bílá, slonová kost, krémová, písková, hnědá, tmavá). Barva jde
+i do spadávky, takže po ořezu nikde nezůstane bílý proužek; prostor s ořezovými značkami (slug)
+zůstává bílý, aby byly značky pro tiskárnu čitelné. Na tmavém podkladu se kalendárium samo přebarví
+do světlé, aby zůstalo čitelné.
+
+Výplň okolo zmenšené fotky má proto novou – a nově výchozí – volbu **Stejná jako podklad listu**:
+fotka pak na listu „plave" v jednolité barvě bez jakéhokoli patrného rámečku.
+
 ### Velikost fotky (od 1.1)
 
 Posuvník *Velikost fotky* jde od 30 % do 200 %, kde **100 % = fotka přesně vyplní stranu**. Pod 100 %
 se fotka zmenší, takže je z ní vidět víc – a plocha kolem ní se **vždy vyplní**, aby na straně nevznikl
-prázdný okraj. Výplň se volí pro celý kalendář: rozmazaná fotka (výchozí), barva odebraná z fotky, nebo
-bílá jako pas-partout. Tlačítka *Vyplnit stranu* a *Celá fotka* nastaví obě krajní polohy jedním klikem.
+prázdný okraj. Výplň se volí pro celý kalendář: stejná jako podklad listu (výchozí), rozmazaná fotka, barva
+odebraná z fotky, nebo bílá. Tlačítka *Vyplnit stranu* a *Celá fotka* nastaví obě krajní polohy jedním klikem.
 
 Fotka se umisťuje výpočtem v milimetrech, takže náhled a tisková data sedí na desetinu milimetru.
 
@@ -79,6 +90,9 @@ obrázky (pozadí, Ůska, figura Fus Boba, ukázky) v `public/brand/`.
 
 ## Verze
 
+- **1.2** (18. 9. 2026) – nastavitelná barva podkladu listu (pipeta + vzorník), výplň okolo fotky
+  může být totožná s podkladem listu (nová výchozí volba), tmavý podklad přebarví kalendárium
+  do světlé, slug s ořezovými značkami zůstává bílý.
 - **1.1.1** (18. 9. 2026) – logo Fus Boba překresleno z originálu s čistou průhledností (dřív mělo
   kolem sebe patrný obdélníkový závoj z šumu v alfa kanálu), v tiskovém pohledu přibyl návod
   na nastavení tiskového dialogu.

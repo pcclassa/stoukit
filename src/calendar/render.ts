@@ -28,6 +28,18 @@ export function geometry(p: CalendarProject, forPrint: boolean): SheetGeometry {
   return { trimW, trimH, bleed, slug, sheetW: trimW + 2 * pad, sheetH: trimH + 2 * pad };
 }
 
+/** Je barva podkladu tmavá? Podle toho se přebarví text kalendária. */
+export function isDarkColor(hex: string): boolean {
+  const m = /^#?([0-9a-f]{6})$/i.exec(hex.trim());
+  if (!m) return false;
+  const n = parseInt(m[1], 16);
+  const [r, g, b] = [(n >> 16) & 255, (n >> 8) & 255, n & 255].map((v) => {
+    const c = v / 255;
+    return c <= 0.04045 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4;
+  });
+  return 0.2126 * r + 0.7152 * g + 0.0722 * b < 0.35;
+}
+
 /** Podíl výšky strany, který zabírá fotka u měsíční strany. */
 export const PHOTO_RATIO = { portrait: 0.64, landscape: 0.6 };
 
@@ -101,6 +113,9 @@ function photoLayers(p: CalendarProject, slot: Slot, imageUrl: string, forPrint:
       fill.append(bg);
     } else if (p.photoFill === 'color') {
       fill.style.background = slot.avgColor ?? '#e9dfc6';
+    } else if (p.photoFill === 'page') {
+      // stejná barva jako podklad celého listu – fotka pak splyne se stranou
+      fill.style.background = p.pageColor;
     }
     layers.push(fill);
   }
@@ -128,7 +143,9 @@ export function renderSheet(
 ): HTMLElement {
   const g = geometry(p, forPrint);
   const sheet = document.createElement('section');
-  sheet.className = `cal-sheet cal-sheet--${p.orientation}${forPrint ? ' cal-sheet--print' : ''}`;
+  sheet.className = `cal-sheet cal-sheet--${p.orientation}${forPrint ? ' cal-sheet--print' : ''}${
+    isDarkColor(p.pageColor) ? ' cal-sheet--dark' : ''
+  }`;
   sheet.style.width = `${g.sheetW}mm`;
   sheet.style.height = `${g.sheetH}mm`;
   sheet.style.setProperty('--bleed', `${g.bleed}mm`);
@@ -136,11 +153,15 @@ export function renderSheet(
   sheet.style.setProperty('--trim-w', `${g.trimW}mm`);
   sheet.style.setProperty('--trim-h', `${g.trimH}mm`);
   sheet.style.setProperty('--binding', `${p.print.bindingMargin}mm`);
+  sheet.style.setProperty('--page-color', p.pageColor);
+  // arch kolem spadávky (slug) zůstává bílý, aby byly ořezové značky čitelné
+  sheet.style.background = '#fff';
 
   if (g.slug > 0) sheet.append(cropMarks(g));
 
   const page = document.createElement('div');
   page.className = `cal-page ${slot.index === 0 ? 'cal-page--cover' : 'cal-page--month'}`;
+  page.style.background = p.pageColor;
   page.style.left = `${g.slug}mm`;
   page.style.top = `${g.slug}mm`;
   page.style.width = `${g.trimW + 2 * g.bleed}mm`;
@@ -152,6 +173,7 @@ export function renderSheet(
   if (imageUrl) {
     photo.append(...photoLayers(p, slot, imageUrl, forPrint));
   } else {
+    photo.style.background = p.pageColor;
     photo.classList.add('cal-photo--empty');
     photo.innerHTML = `<span>${slot.index === 0 ? 'Fotka na obálku' : MONTHS_CS[slot.index - 1]}<br><small>přetáhni sem fotku</small></span>`;
   }

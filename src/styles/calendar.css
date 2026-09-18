@@ -16,7 +16,7 @@
 .cal-page {
   position: absolute;
   overflow: hidden;
-  background: #fff;
+  background: var(--page-color, #fff);
   display: flex;
   flex-direction: column;
 }
@@ -40,7 +40,7 @@
   position: relative;
   flex: 0 0 auto;
   overflow: hidden;
-  background: var(--sand-100);
+  background: var(--page-color, var(--sand-100));
 }
 
 .cal-page--cover .cal-photo {
@@ -275,6 +275,60 @@
   color: var(--brown-300);
 }
 
+/* tmavý podklad listu – kalendárium se přebarví, aby zůstalo čitelné */
+.cal-sheet--dark .cal-month {
+  color: #fff;
+}
+
+.cal-sheet--dark .cal-year,
+.cal-sheet--dark .cal-grid th,
+.cal-sheet--dark .cal-grid .cal-wk,
+.cal-sheet--dark .cal-foot {
+  color: rgba(255, 255, 255, 0.62);
+}
+
+.cal-sheet--dark .cal-grid td {
+  color: #fff;
+  border-bottom-color: rgba(255, 255, 255, 0.22);
+}
+
+.cal-sheet--dark .cal-grid th {
+  border-bottom-color: rgba(255, 255, 255, 0.75);
+}
+
+.cal-sheet--dark .cal-grid .cal-wk {
+  border-right-color: rgba(255, 255, 255, 0.22);
+}
+
+.cal-sheet--dark .cal-grid td.is-out span {
+  color: rgba(255, 255, 255, 0.3);
+}
+
+.cal-sheet--dark .cal-grid .is-sun,
+.cal-sheet--dark .cal-grid td.is-holiday span {
+  color: #ff9c92;
+}
+
+.cal-sheet--dark .cal-grid td.is-holiday span::after {
+  background: #ff9c92;
+}
+
+.cal-sheet--dark .cal-grid .is-sat {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.cal-sheet--dark .cal-holidays {
+  color: rgba(255, 255, 255, 0.72);
+}
+
+.cal-sheet--dark .cal-holidays b {
+  color: #ff9c92;
+}
+
+.cal-sheet--dark .cal-caption {
+  color: rgba(255, 255, 255, 0.82);
+}
+
 /* landscape – užší kalendárium, menší písma */
 .cal-sheet--landscape .cal-page--month .cal-photo {
   height: 60%;
@@ -364,6 +418,32 @@
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
+}
+
+/* vzorník barev podkladu */
+.swatches {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.swatch {
+  width: 26px;
+  height: 26px;
+  border-radius: 6px;
+  border: 1.5px solid var(--ink);
+  padding: 0;
+  cursor: pointer;
+}
+
+.swatch.is-active {
+  box-shadow: 0 0 0 3px var(--smile);
+}
+
+.field input[type='color'] {
+  padding: 2px;
+  height: 34px;
+  cursor: pointer;
 }
 
 /* pás slotů */

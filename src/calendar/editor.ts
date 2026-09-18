@@ -72,6 +72,14 @@ export function calendarPage(root: HTMLElement): () => void {
       check('Názvy svátků pod mřížkou', project.showHolidayNames, (v) => ((project.showHolidayNames = v), commit()))
     );
 
+    side.append(
+      field(
+        `Barva podkladu listu · ${project.pageColor.toUpperCase()}`,
+        input('color', project.pageColor, (v) => ((project.pageColor = v), commit()))
+      ),
+      swatches(PAGE_COLORS, project.pageColor, (v) => ((project.pageColor = v), commit()))
+    );
+
     const slot = project.slots[active];
     side.append(el('h3', {}, active === 0 ? 'Obálka' : MONTHS_CS[active - 1]));
     side.append(
@@ -110,9 +118,10 @@ export function calendarPage(root: HTMLElement): () => void {
           'Výplň okolo fotky (platí pro celý kalendář)',
           select(
             [
+              ['page', 'Stejná jako podklad listu'],
               ['blur', 'Rozmazaná fotka'],
               ['color', 'Barva z fotky'],
-              ['white', 'Bílá (pas-partout)'],
+              ['white', 'Bílá'],
             ],
             project.photoFill,
             (v) => ((project.photoFill = v as PhotoFill), commit())
@@ -335,6 +344,34 @@ export function calendarPage(root: HTMLElement): () => void {
   const onResize = () => paintStage();
   window.addEventListener('resize', onResize);
   return () => window.removeEventListener('resize', onResize);
+}
+
+/** Nabídka barev podkladu – bílá a odstíny papíru z identity Stouníků. */
+const PAGE_COLORS: [string, string][] = [
+  ['#ffffff', 'bílá'],
+  ['#faf6ee', 'slonová kost'],
+  ['#f3ead5', 'krémová'],
+  ['#efe5cd', 'písková'],
+  ['#e9dfc6', 'tmavší písková'],
+  ['#4a3626', 'hnědá'],
+  ['#2e2a23', 'tmavá'],
+];
+
+/** Řádek barevných čtverečků pro rychlou volbu podkladu. */
+function swatches(colors: [string, string][], value: string, onPick: (v: string) => void): HTMLElement {
+  const row = el('div', { class: 'swatches' });
+  for (const [hex, name] of colors) {
+    const b = el('button', {
+      class: `swatch${hex.toLowerCase() === value.toLowerCase() ? ' is-active' : ''}`,
+      type: 'button',
+      title: `${name} (${hex})`,
+      'aria-label': name,
+    });
+    b.style.background = hex;
+    b.onclick = () => onPick(hex);
+    row.append(b);
+  }
+  return row;
 }
 
 /** Název souboru bez diakritiky a bez znaků, které dělají potíže napříč systémy. */
