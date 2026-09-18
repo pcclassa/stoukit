@@ -223,7 +223,7 @@ function clientBlock(p: CalendarProject, logoUrl?: string): string {
 
   const logo = hasLogo
     ? `<span class="cal-cover__plate${c.plate ? '' : ' cal-cover__plate--bare'}">
-         <img src="${logoUrl}" alt="" style="height:${c.logoHeight}mm" />
+         <img src="${logoUrl}" alt="" style="max-height:${c.logoHeight}mm" />
        </span>`
     : '';
   const text = hasText ? `<span class="cal-cover__client-text">${escape(c.text!.trim())}</span>` : '';

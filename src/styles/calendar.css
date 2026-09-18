@@ -182,8 +182,11 @@
 
 .cal-cover__plate img {
   display: block;
+  /* obě omezení najednou – logo se zmenší v poměru, nikdy se nedeformuje */
   width: auto;
-  max-width: 70mm;
+  height: auto;
+  max-width: 78mm;
+  object-fit: contain;
 }
 
 .cal-cover__client-text {
