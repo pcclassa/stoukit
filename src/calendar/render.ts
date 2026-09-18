@@ -28,8 +28,93 @@ export function geometry(p: CalendarProject, forPrint: boolean): SheetGeometry {
   return { trimW, trimH, bleed, slug, sheetW: trimW + 2 * pad, sheetH: trimH + 2 * pad };
 }
 
-function photoStyle(slot: Slot): string {
-  return `object-position:${slot.posX}% ${slot.posY}%;transform:scale(${slot.zoom});transform-origin:${slot.posX}% ${slot.posY}%`;
+/** Podíl výšky strany, který zabírá fotka u měsíční strany. */
+export const PHOTO_RATIO = { portrait: 0.64, landscape: 0.6 };
+
+export interface PhotoBox {
+  frameW: number;
+  frameH: number;
+  dispW: number;
+  dispH: number;
+  left: number;
+  top: number;
+  /** měřítko mm na px původní fotky */
+  scale: number;
+  /** true, když fotka nepokrývá celou plochu a kolem vzniká výplň */
+  hasGap: boolean;
+}
+
+/** Plocha pro fotku na dané straně, v mm (včetně spadávky). */
+export function photoFrame(p: CalendarProject, slotIndex: number, forPrint: boolean): { w: number; h: number } {
+  const g = geometry(p, forPrint);
+  const w = g.trimW + 2 * g.bleed;
+  const h = g.trimH + 2 * g.bleed;
+  return slotIndex === 0 ? { w, h } : { w, h: h * PHOTO_RATIO[p.orientation] };
+}
+
+/**
+ * Spočítá umístění fotky v rámečku. zoom = 1 znamená přesné pokrytí plochy,
+ * menší hodnota fotku zmenší (kolem zůstane výplň), větší ji přiblíží.
+ */
+export function photoBox(p: CalendarProject, slot: Slot, forPrint: boolean): PhotoBox | undefined {
+  if (!slot.imgW || !slot.imgH) return undefined;
+  const { w: frameW, h: frameH } = photoFrame(p, slot.index, forPrint);
+  const cover = Math.max(frameW / slot.imgW, frameH / slot.imgH);
+  const scale = cover * slot.zoom;
+  const dispW = slot.imgW * scale;
+  const dispH = slot.imgH * scale;
+  return {
+    frameW,
+    frameH,
+    dispW,
+    dispH,
+    left: ((frameW - dispW) * slot.posX) / 100,
+    top: ((frameH - dispH) * slot.posY) / 100,
+    scale,
+    hasGap: dispW < frameW - 0.01 || dispH < frameH - 0.01,
+  };
+}
+
+/** Vrstvy fotky: výplň pozadí + samotná fotka umístěná na desetinu milimetru. */
+function photoLayers(p: CalendarProject, slot: Slot, imageUrl: string, forPrint: boolean): HTMLElement[] {
+  const box = photoBox(p, slot, forPrint);
+  const layers: HTMLElement[] = [];
+
+  // bez známých rozměrů fotky (starý projekt) se chováme jako dřív – plné pokrytí
+  if (!box) {
+    const img = document.createElement('img');
+    img.className = 'cal-photo__img cal-photo__img--cover';
+    img.src = imageUrl;
+    img.alt = '';
+    img.style.objectPosition = `${slot.posX}% ${slot.posY}%`;
+    return [img];
+  }
+
+  if (box.hasGap) {
+    const fill = document.createElement('div');
+    fill.className = `cal-photo__fill cal-photo__fill--${p.photoFill}`;
+    if (p.photoFill === 'blur') {
+      const bg = document.createElement('img');
+      bg.className = 'cal-photo__blur';
+      bg.src = imageUrl;
+      bg.alt = '';
+      fill.append(bg);
+    } else if (p.photoFill === 'color') {
+      fill.style.background = slot.avgColor ?? '#e9dfc6';
+    }
+    layers.push(fill);
+  }
+
+  const img = document.createElement('img');
+  img.className = 'cal-photo__img';
+  img.src = imageUrl;
+  img.alt = '';
+  img.style.width = `${box.dispW.toFixed(2)}mm`;
+  img.style.height = `${box.dispH.toFixed(2)}mm`;
+  img.style.left = `${box.left.toFixed(2)}mm`;
+  img.style.top = `${box.top.toFixed(2)}mm`;
+  layers.push(img);
+  return layers;
 }
 
 /**
@@ -63,12 +148,9 @@ export function renderSheet(
 
   const photo = document.createElement('div');
   photo.className = 'cal-photo';
+  if (slot.index !== 0) photo.style.height = `${(PHOTO_RATIO[p.orientation] * 100).toFixed(2)}%`;
   if (imageUrl) {
-    const img = document.createElement('img');
-    img.src = imageUrl;
-    img.alt = '';
-    img.setAttribute('style', photoStyle(slot));
-    photo.append(img);
+    photo.append(...photoLayers(p, slot, imageUrl, forPrint));
   } else {
     photo.classList.add('cal-photo--empty');
     photo.innerHTML = `<span>${slot.index === 0 ? 'Fotka na obálku' : MONTHS_CS[slot.index - 1]}<br><small>přetáhni sem fotku</small></span>`;

@@ -43,18 +43,41 @@
   background: var(--sand-100);
 }
 
-.cal-page--month .cal-photo {
-  height: 64%;
-}
-
 .cal-page--cover .cal-photo {
   position: absolute;
   inset: 0;
   height: 100%;
 }
 
-.cal-photo img {
+/* výplň plochy kolem zmenšené fotky */
+.cal-photo__fill {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+
+.cal-photo__fill--white {
+  background: #fff;
+}
+
+.cal-photo__blur {
+  position: absolute;
+  inset: -8%;
+  width: 116%;
+  height: 116%;
+  object-fit: cover;
+  filter: blur(5mm) saturate(1.05);
+}
+
+/* samotná fotka – umístěná v mm, ať sedí náhled i tiskový výstup */
+.cal-photo__img {
+  position: absolute;
   display: block;
+  object-fit: fill;
+}
+
+.cal-photo__img--cover {
+  inset: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;

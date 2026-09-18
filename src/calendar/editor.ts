@@ -2,15 +2,21 @@
 import { renderShell, el } from '../lib/shell';
 import { navigate } from '../lib/router';
 import { MONTHS_CS } from './calendarium';
-import { geometry, renderSheet } from './render';
+import { geometry, renderSheet, photoBox } from './render';
 import {
   loadProject,
   saveProject,
   putImage,
   getImageUrl,
   imageSize,
+  averageColor,
   pruneImages,
+  exportProjectFile,
+  importProjectFile,
+  MIN_ZOOM,
+  MAX_ZOOM,
   type CalendarProject,
+  type PhotoFill,
   type Slot,
 } from './store';
 
@@ -20,7 +26,6 @@ const MIN_DPI = 200; // pod touto hodnotou varujeme
 export function calendarPage(root: HTMLElement): () => void {
   let project = loadProject();
   let active = 1; // začínáme lednem – obálku obvykle řeší jako poslední
-  const sizes = new Map<string, { w: number; h: number }>();
 
   const main = el('main', { class: 'page' });
   const editor = el('div', { class: 'cal-editor' });
@@ -73,14 +78,56 @@ export function calendarPage(root: HTMLElement): () => void {
       field('Popisek pod fotkou (volitelný)', input('text', slot.caption ?? '', (v) => ((slot.caption = v), commit()))),
       field(`Posun vodorovně · ${slot.posX} %`, range(slot.posX, 0, 100, (v) => ((slot.posX = v), commit()))),
       field(`Posun svisle · ${slot.posY} %`, range(slot.posY, 0, 100, (v) => ((slot.posY = v), commit()))),
-      field(`Přiblížení · ${slot.zoom.toFixed(2)}×`, range(slot.zoom, 1, 2, (v) => ((slot.zoom = v), commit()), 0.01))
+      field(
+        `Velikost fotky · ${Math.round(slot.zoom * 100)} %${slot.zoom < 1 ? ' (zmenšená)' : slot.zoom > 1 ? ' (přiblížená)' : ' (vyplní stranu)'}`,
+        range(slot.zoom, MIN_ZOOM, MAX_ZOOM, (v) => ((slot.zoom = v), commit()), 0.01)
+      )
     );
+
+    const fitBtns = el('div', { class: 'actions' });
+    const fitFull = el('button', { class: 'btn btn--ghost btn--small' }, 'Vyplnit stranu');
+    fitFull.onclick = () => {
+      slot.zoom = 1;
+      slot.posX = slot.posY = 50;
+      commit();
+    };
+    const fitWhole = el('button', { class: 'btn btn--ghost btn--small' }, 'Celá fotka');
+    fitWhole.onclick = () => {
+      const box = photoBox(project, { ...slot, zoom: 1 }, true);
+      if (box) {
+        // poměr „celá fotka se vejde“ k „fotka vyplní plochu“
+        slot.zoom = Math.min(box.frameW / box.dispW, box.frameH / box.dispH);
+        slot.posX = slot.posY = 50;
+      }
+      commit();
+    };
+    fitBtns.append(fitFull, fitWhole);
+    if (slot.imageId) side.append(fitBtns);
+
+    if (slot.imageId && slot.zoom < 1) {
+      side.append(
+        field(
+          'Výplň okolo fotky (platí pro celý kalendář)',
+          select(
+            [
+              ['blur', 'Rozmazaná fotka'],
+              ['color', 'Barva z fotky'],
+              ['white', 'Bílá (pas-partout)'],
+            ],
+            project.photoFill,
+            (v) => ((project.photoFill = v as PhotoFill), commit())
+          )
+        )
+      );
+    }
     if (slot.imageId) {
       const rm = el('button', { class: 'btn btn--ghost btn--small' }, 'Odebrat fotku');
       rm.onclick = async () => {
         slot.imageId = undefined;
         slot.posX = slot.posY = 50;
         slot.zoom = 1;
+        slot.imgW = slot.imgH = undefined;
+        slot.avgColor = undefined;
         saveProject(project);
         await pruneImages(project);
         paint();
@@ -97,8 +144,16 @@ export function calendarPage(root: HTMLElement): () => void {
     const actions = el('div', { class: 'actions' });
     const printBtn = el('button', { class: 'btn' }, 'Generovat tiskové PDF');
     printBtn.onclick = () => navigate('/kalendar/tisk');
-    const exportBtn = el('button', { class: 'btn btn--ghost btn--small' }, 'Export projektu (JSON)');
-    exportBtn.onclick = exportJson;
+    const exportBtn = el('button', { class: 'btn btn--ghost btn--small' }, 'Uložit projekt do souboru');
+    exportBtn.onclick = saveToFile;
+    const importLabel = el('label', { class: 'btn btn--ghost btn--small' }, 'Načíst projekt ze souboru');
+    const importInput = el('input', { type: 'file', accept: '.stoukit,application/json' });
+    importInput.style.display = 'none';
+    importInput.onchange = () => {
+      const f = importInput.files?.[0];
+      if (f) loadFromFile(f);
+    };
+    importLabel.append(importInput);
     const resetBtn = el('button', { class: 'btn btn--ghost btn--small' }, 'Nový projekt');
     resetBtn.onclick = () => {
       if (!confirm('Smazat aktuální kalendář a začít znovu?')) return;
@@ -106,13 +161,18 @@ export function calendarPage(root: HTMLElement): () => void {
       project = loadProject();
       pruneImages(project).then(paint);
     };
-    actions.append(printBtn, exportBtn, resetBtn);
+    actions.append(printBtn, exportBtn, importLabel, resetBtn);
     side.append(actions);
     side.append(
       el(
         'p',
         { class: 'hint' },
         'PDF vznikne přes tisk prohlížeče: v dialogu zvol „Uložit jako PDF“, okraje „Žádné“ a zapni grafiku na pozadí. Vzniknou vektorová data s fotkami v plném rozlišení.'
+      ),
+      el(
+        'p',
+        { class: 'hint' },
+        'Soubor .stoukit obsahuje i fotky, takže kalendář přeneseš na jiný počítač nebo do další verze aplikace.'
       )
     );
   }
@@ -182,7 +242,9 @@ export function calendarPage(root: HTMLElement): () => void {
     slot.imageId = await putImage(file);
     slot.posX = slot.posY = 50;
     slot.zoom = 1;
-    await measure(slot.imageId);
+    slot.imgW = slot.imgH = undefined;
+    slot.avgColor = undefined;
+    await measure(slot);
     saveProject(project);
     await pruneImages(project);
     active = slot.index;
@@ -197,39 +259,64 @@ export function calendarPage(root: HTMLElement): () => void {
       slot.imageId = await putImage(imgs[i]);
       slot.posX = slot.posY = 50;
       slot.zoom = 1;
-      await measure(slot.imageId);
+      slot.imgW = slot.imgH = undefined;
+      slot.avgColor = undefined;
+      await measure(slot);
     }
     saveProject(project);
     paint();
   }
 
-  async function measure(id: string): Promise<void> {
-    const url = await getImageUrl(id);
-    if (url) sizes.set(id, await imageSize(url));
+  /** Doplní rozměry a průměrnou barvu fotky do slotu (u starších projektů chybí). */
+  async function measure(slot: Slot): Promise<void> {
+    if (!slot.imageId) return;
+    const url = await getImageUrl(slot.imageId);
+    if (!url) return;
+    if (!slot.imgW || !slot.imgH) {
+      const { w, h } = await imageSize(url);
+      slot.imgW = w;
+      slot.imgH = h;
+    }
+    if (!slot.avgColor) slot.avgColor = await averageColor(url);
   }
 
+  /** Rozlišení fotky přepočtené na tiskovou plochu. */
   function effectiveDpi(slot: Slot): number {
-    const sz = slot.imageId && sizes.get(slot.imageId);
-    if (!sz) return 999;
-    const g = geometry(project, true);
-    const areaW = g.trimW + 2 * g.bleed;
-    const areaH = slot.index === 0 ? g.trimH + 2 * g.bleed : (g.trimH + 2 * g.bleed) * 0.64;
-    // object-fit: cover – měřítko určuje menší z poměrů
-    const coverScale = Math.max(areaW / sz.w, areaH / sz.h) * slot.zoom; // mm na px
-    return Math.round(25.4 / coverScale);
+    const box = photoBox(project, slot, true);
+    if (!box) return 999;
+    return Math.round(25.4 / box.scale);
   }
 
   function lowRes(slot: Slot): boolean {
-    return effectiveDpi(slot) < MIN_DPI;
+    return !!slot.imageId && effectiveDpi(slot) < MIN_DPI;
   }
 
-  function exportJson(): void {
-    const blob = new Blob([JSON.stringify(project, null, 2)], { type: 'application/json' });
+  async function saveToFile(): Promise<void> {
+    const blob = await exportProjectFile(project);
     const a = document.createElement('a');
     a.href = URL.createObjectURL(blob);
-    a.download = `${project.name.replace(/\s+/g, '-')}.json`;
+    a.download = `${safeFileName(project.name)}.stoukit`;
+    document.body.append(a);
     a.click();
-    URL.revokeObjectURL(a.href);
+    setTimeout(() => {
+      URL.revokeObjectURL(a.href);
+      a.remove();
+    }, 5000);
+  }
+
+  async function loadFromFile(file: File): Promise<void> {
+    try {
+      const loaded = await importProjectFile(await file.text());
+      project = loaded;
+      saveProject(project);
+      await Promise.all(project.slots.map(measure));
+      saveProject(project);
+      await pruneImages(project);
+      active = 1;
+      paint();
+    } catch (e) {
+      alert(`Soubor se nepodařilo načíst: ${(e as Error).message}`);
+    }
   }
 
   /* ---------------- pomocné ---------------- */
@@ -238,13 +325,26 @@ export function calendarPage(root: HTMLElement): () => void {
     paintStage();
   }
 
-  // Změřit fotky, které už v projektu jsou
-  Promise.all(project.slots.filter((s) => s.imageId).map((s) => measure(s.imageId!))).then(paint);
+  // Doplnit rozměry fotek, které už v projektu jsou (projekty z verze 1.0)
+  Promise.all(project.slots.map(measure)).then(() => {
+    saveProject(project);
+    paint();
+  });
   paint();
 
   const onResize = () => paintStage();
   window.addEventListener('resize', onResize);
   return () => window.removeEventListener('resize', onResize);
+}
+
+/** Název souboru bez diakritiky a bez znaků, které dělají potíže napříč systémy. */
+function safeFileName(name: string): string {
+  const base = name
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^A-Za-z0-9._-]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+  return base || 'kalendar';
 }
 
 /* ---------- drobné UI helpery ---------- */

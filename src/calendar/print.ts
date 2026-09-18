@@ -4,7 +4,7 @@
  */
 import { el } from '../lib/shell';
 import { geometry, renderSheet } from './render';
-import { loadProject, getImageUrl } from './store';
+import { loadProject, getImageUrl, imageSize } from './store';
 
 export function printPage(root: HTMLElement): () => void {
   const project = loadProject();
@@ -26,6 +26,12 @@ export function printPage(root: HTMLElement): () => void {
   (async () => {
     for (const slot of project.slots) {
       const url = slot.imageId ? await getImageUrl(slot.imageId) : undefined;
+      // projekt z verze 1.0 nemusí mít uložené rozměry fotek – doplníme je
+      if (url && (!slot.imgW || !slot.imgH)) {
+        const { w, h } = await imageSize(url);
+        slot.imgW = w;
+        slot.imgH = h;
+      }
       wrap.append(renderSheet(project, slot, url, true));
     }
     // počkat na dekódování obrázků, ať se v PDF nic neztratí

@@ -25,9 +25,25 @@ Fotky zůstávají v prohlížeči (IndexedDB), nastavení projektu v localStora
 ## Kalendář – jak to funguje
 
 1. **Nahrát fotky** – hromadně (doplní se do prázdných měsíců podle názvu souboru) nebo přetažením na konkrétní slot.
-2. **Doladit** – posun a přiblížení výřezu, popisek, titul obálky, čísla týdnů, názvy svátků.
+2. **Doladit** – posun, velikost fotky, popisek, titul obálky, čísla týdnů, názvy svátků.
 3. **Generovat tiskové PDF** – otevře se tiskový pohled se všemi 13 stranami. V dialogu prohlížeče
    zvolit *Uložit jako PDF*, okraje *Žádné*, *Grafika na pozadí* zapnuto.
+
+### Velikost fotky (od 1.1)
+
+Posuvník *Velikost fotky* jde od 30 % do 200 %, kde **100 % = fotka přesně vyplní stranu**. Pod 100 %
+se fotka zmenší, takže je z ní vidět víc – a plocha kolem ní se **vždy vyplní**, aby na straně nevznikl
+prázdný okraj. Výplň se volí pro celý kalendář: rozmazaná fotka (výchozí), barva odebraná z fotky, nebo
+bílá jako pas-partout. Tlačítka *Vyplnit stranu* a *Celá fotka* nastaví obě krajní polohy jedním klikem.
+
+Fotka se umisťuje výpočtem v milimetrech, takže náhled a tisková data sedí na desetinu milimetru.
+
+### Přenos kalendáře (od 1.1)
+
+*Uložit projekt do souboru* vytvoří `.stoukit` – jeden soubor, ve kterém je **nastavení i všechny fotky**.
+*Načíst projekt ze souboru* ho otevře zpátky, i na jiném počítači nebo v novější verzi aplikace.
+(Ve verzi 1.0 uměl export jen nastavení bez fotek a načtení chybělo úplně; staré JSON soubory jdou
+načíst taky, ale fotky v nich nejsou.)
 
 Tisková data: čistý formát A3 (297 × 420 mm nebo na šířku) + spadávka (výchozí 3 mm) + ořezové značky
 (5 mm slug). Výsledný arch 313 × 436 mm, 13 stran. Text je vektorový, fotky jdou do PDF v plném rozlišení;
@@ -60,6 +76,12 @@ Převzato 1:1 z webu stouniky.com (repo `pcclassa/stouniky.com`): rozostřené k
 `#EFE5CD` s rámečkem `#1F1D1A`, hnědá `#4A3626`, gradientový rám okna; písma Bricolage Grotesque (nadpisy),
 IBM Plex Sans (text), IBM Plex Mono (štítky, tlačítka), Pacifico (skript). Tokeny jsou v `src/styles/base.css`,
 obrázky (pozadí, Ůska, figura Fus Boba, ukázky) v `public/brand/`.
+
+## Verze
+
+- **1.1** (18. 9. 2026) – zmenšení fotky pod plný formát s výplní okolo (rozmazaná fotka / barva / bílá),
+  umístění fotky počítané v mm, uložení a načtení projektu včetně fotek (`.stoukit`).
+- **1.0** (13. 9. 2026) – editor kalendáře, náhledy, tisková data A3 se spadávkou a ořezovými značkami.
 
 ## Roadmapa
 
