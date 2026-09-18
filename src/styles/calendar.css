@@ -129,7 +129,7 @@
 .cal-cover__brand {
   display: flex;
   align-items: flex-end;
-  justify-content: space-between;
+  gap: 8mm;
   margin-top: 12mm;
   font-family: var(--font-mono);
   font-size: 4.5mm;
@@ -137,8 +137,63 @@
   color: rgba(255, 255, 255, 0.85);
 }
 
-.cal-cover__brand img {
+/* krajní sloupce mají stejnou váhu, takže blok zákazníka sedí přesně uprostřed */
+.cal-cover__side {
+  flex: 1 1 0;
+  min-width: 0;
+}
+
+.cal-cover__side--right {
+  text-align: right;
+}
+
+.cal-cover__fusbobo {
   height: 30mm;
+}
+
+/* vyhrazený prostor zákazníka */
+.cal-cover__client {
+  flex: 0 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3mm;
+  max-width: 45%;
+  text-align: center;
+}
+
+.cal-cover__client--empty {
+  flex: 0 0 auto;
+}
+
+.cal-cover__plate {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 3.5mm 5mm;
+  border-radius: 2.5mm;
+  background: #fff;
+}
+
+.cal-cover__plate--bare {
+  padding: 0;
+  background: none;
+}
+
+.cal-cover__plate img {
+  display: block;
+  width: auto;
+  max-width: 70mm;
+}
+
+.cal-cover__client-text {
+  font-family: var(--font-ui);
+  font-size: 4.2mm;
+  letter-spacing: 0.04em;
+  line-height: 1.35;
+  white-space: pre-line;
+  color: #fff;
+  text-shadow: 0 0.4mm 1.2mm rgba(25, 18, 10, 0.55);
 }
 
 /* ---------- Kalendárium ---------- */
@@ -418,6 +473,17 @@
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
+}
+
+.field textarea {
+  padding: 8px 12px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--ink);
+  background: var(--white);
+  font-family: var(--font-ui);
+  font-size: 0.95rem;
+  color: var(--text);
+  resize: vertical;
 }
 
 /* vzorník barev podkladu */

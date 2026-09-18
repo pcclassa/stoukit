@@ -139,7 +139,8 @@ export function renderSheet(
   p: CalendarProject,
   slot: Slot,
   imageUrl: string | undefined,
-  forPrint: boolean
+  forPrint: boolean,
+  extras: { clientLogoUrl?: string } = {}
 ): HTMLElement {
   const g = geometry(p, forPrint);
   const sheet = document.createElement('section');
@@ -180,7 +181,7 @@ export function renderSheet(
   page.append(photo);
 
   if (slot.index === 0) {
-    page.append(coverBody(p));
+    page.append(coverBody(p, extras.clientLogoUrl));
   } else {
     page.append(monthBody(p, slot));
   }
@@ -195,7 +196,7 @@ export function renderSheet(
   return sheet;
 }
 
-function coverBody(p: CalendarProject): HTMLElement {
+function coverBody(p: CalendarProject, clientLogoUrl?: string): HTMLElement {
   const body = document.createElement('div');
   body.className = 'cal-cover';
   body.innerHTML = `
@@ -204,10 +205,29 @@ function coverBody(p: CalendarProject): HTMLElement {
       <p class="cal-cover__subtitle">${escape(p.subtitle)}</p>
     </div>
     <div class="cal-cover__brand">
-      <img src="./brand/fusbobo-logo-white.png" alt="Fus Bobo" />
-      <span>www.stouniky.com</span>
+      <span class="cal-cover__side cal-cover__side--left">
+        <img class="cal-cover__fusbobo" src="./brand/fusbobo-logo-white.png" alt="Fus Bobo" />
+      </span>
+      ${clientBlock(p, clientLogoUrl)}
+      <span class="cal-cover__side cal-cover__side--right">www.stouniky.com</span>
     </div>`;
   return body;
+}
+
+/** Vyhrazený prostor uprostřed dole na obálce: logo a text zákazníka. */
+function clientBlock(p: CalendarProject, logoUrl?: string): string {
+  const c = p.client;
+  const hasLogo = !!logoUrl;
+  const hasText = !!c?.text?.trim();
+  if (!hasLogo && !hasText) return '<span class="cal-cover__client cal-cover__client--empty"></span>';
+
+  const logo = hasLogo
+    ? `<span class="cal-cover__plate${c.plate ? '' : ' cal-cover__plate--bare'}">
+         <img src="${logoUrl}" alt="" style="height:${c.logoHeight}mm" />
+       </span>`
+    : '';
+  const text = hasText ? `<span class="cal-cover__client-text">${escape(c.text!.trim())}</span>` : '';
+  return `<span class="cal-cover__client">${logo}${text}</span>`;
 }
 
 function monthBody(p: CalendarProject, slot: Slot): HTMLElement {

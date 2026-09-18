@@ -38,6 +38,7 @@ export function printPage(root: HTMLElement): () => void {
   root.append(bar, help, wrap);
 
   (async () => {
+    const clientLogoUrl = project.client?.logoId ? await getImageUrl(project.client.logoId) : undefined;
     for (const slot of project.slots) {
       const url = slot.imageId ? await getImageUrl(slot.imageId) : undefined;
       // projekt z verze 1.0 nemusí mít uložené rozměry fotek – doplníme je
@@ -46,7 +47,7 @@ export function printPage(root: HTMLElement): () => void {
         slot.imgW = w;
         slot.imgH = h;
       }
-      wrap.append(renderSheet(project, slot, url, true));
+      wrap.append(renderSheet(project, slot, url, true, { clientLogoUrl }));
     }
     // počkat na dekódování obrázků, ať se v PDF nic neztratí
     await Promise.all([...wrap.querySelectorAll('img')].map((i) => (i.decode ? i.decode().catch(() => undefined) : Promise.resolve())));

@@ -29,6 +29,17 @@ Fotky zůstávají v prohlížeči (IndexedDB), nastavení projektu v localStora
 3. **Generovat tiskové PDF** – otevře se tiskový pohled se všemi 13 stranami. V dialogu prohlížeče
    zvolit *Uložit jako PDF*, okraje *Žádné*, *Grafika na pozadí* zapnuto.
 
+### Zákazník na obálce (od 1.4)
+
+Obálka má uprostřed dole vyhrazený prostor mezi logem Fus Boba a adresou webu. Dá se do něj vložit
+**logo zákazníka a text** – pro kalendáře dělané na zakázku pro firmu. V panelu *Zákazník na obálce*
+se nahraje logo (PNG s průhledností nebo běžný obrázek), nastaví se jeho výška v mm a připíše text
+(klidně víceřádkový). Pod logem je ve výchozím stavu bílá plocha, aby bylo čitelné i na tmavé fotce;
+u loga s průhledností, které má vyjít přímo do fotky, se vypne.
+
+Když není vyplněné logo ani text, obálka vypadá přesně jako dřív. Logo zákazníka se ukládá i do
+souboru `.stoukit`.
+
 ### Barva podkladu listu (od 1.2)
 
 *Barva podkladu listu* nastaví barvu celé strany – kalendária i plochy kolem fotky. Vybírá se pipetou
@@ -90,6 +101,8 @@ obrázky (pozadí, Ůska, figura Fus Boba, ukázky) v `public/brand/`.
 
 ## Verze
 
+- **1.4** (18. 9. 2026) – volitelné logo a text zákazníka ve vyhrazeném prostoru uprostřed dole
+  na obálce (výška loga, bílá plocha pod logem, víceřádkový text); logo jde i do souboru `.stoukit`.
 - **1.2** (18. 9. 2026) – nastavitelná barva podkladu listu (pipeta + vzorník), výplň okolo fotky
   může být totožná s podkladem listu (nová výchozí volba), tmavý podklad přebarví kalendárium
   do světlé, slug s ořezovými značkami zůstává bílý.

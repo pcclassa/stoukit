@@ -29,6 +29,21 @@ export interface Slot {
   avgColor?: string;
 }
 
+/**
+ * Volitelný blok zákazníka na obálce – vyhrazené místo uprostřed dole,
+ * mezi logem fotografa a adresou webu.
+ */
+export interface ClientBlock {
+  /** logo zákazníka v IndexedDB */
+  logoId?: string;
+  /** text pod logem (může být víceřádkový) */
+  text?: string;
+  /** výška loga v mm na tiskové straně */
+  logoHeight: number;
+  /** bílá plocha pod logem, aby bylo čitelné i na tmavé fotce */
+  plate: boolean;
+}
+
 export interface PrintSettings {
   /** spadávka v mm na každé straně */
   bleed: number;
@@ -50,6 +65,8 @@ export interface CalendarProject {
   photoFill: PhotoFill;
   /** barva podkladu celého listu (kalendárium i plocha kolem fotky) */
   pageColor: string;
+  /** zákazník na obálce (logo + text) */
+  client: ClientBlock;
   slots: Slot[];
   print: PrintSettings;
   updatedAt: number;
@@ -74,6 +91,7 @@ export function defaultProject(): CalendarProject {
     showHolidayNames: true,
     photoFill: 'page',
     pageColor: '#ffffff',
+    client: { logoHeight: 18, plate: true },
     slots: Array.from({ length: 13 }, (_, i) => ({ index: i, posX: 50, posY: 50, zoom: 1 })),
     print: { bleed: 3, cropMarks: true, bindingMargin: 12 },
     updatedAt: Date.now(),
@@ -129,7 +147,7 @@ export async function removeImage(id: string): Promise<void> {
 
 /** Smaže fotky, na které už žádný slot neodkazuje. */
 export async function pruneImages(p: CalendarProject): Promise<void> {
-  const used = new Set(p.slots.map((s) => s.imageId).filter(Boolean));
+  const used = new Set([...p.slots.map((s) => s.imageId), p.client?.logoId].filter(Boolean));
   for (const k of await keys()) {
     if (typeof k === 'string' && k.startsWith(IMG_PREFIX) && !used.has(k.slice(IMG_PREFIX.length))) {
       await removeImage(k.slice(IMG_PREFIX.length));
@@ -197,10 +215,11 @@ async function dataUrlToBlob(url: string): Promise<Blob> {
 /** Zabalí projekt i s fotkami do jednoho souboru .stoukit (JSON). */
 export async function exportProjectFile(p: CalendarProject): Promise<Blob> {
   const images: Record<string, string> = {};
-  for (const s of p.slots) {
-    if (!s.imageId || images[s.imageId]) continue;
-    const blob = await getImageBlob(s.imageId);
-    if (blob) images[s.imageId] = await blobToDataUrl(blob);
+  const ids = [...p.slots.map((s) => s.imageId), p.client?.logoId];
+  for (const id of ids) {
+    if (!id || images[id]) continue;
+    const blob = await getImageBlob(id);
+    if (blob) images[id] = await blobToDataUrl(blob);
   }
   const file: ProjectFile = {
     format: 'stoukit-calendar',
@@ -242,5 +261,7 @@ export async function importProjectFile(text: string): Promise<CalendarProject> 
     ...s,
     imageId: s.imageId ? remap.get(s.imageId) : undefined,
   }));
+  p.client = { ...defaultProject().client, ...p.client };
+  if (p.client.logoId) p.client.logoId = remap.get(p.client.logoId);
   return p;
 }

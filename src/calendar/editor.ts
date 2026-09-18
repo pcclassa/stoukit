@@ -144,6 +144,36 @@ export function calendarPage(root: HTMLElement): () => void {
       side.append(rm);
     }
 
+    side.append(el('h3', {}, 'Zákazník na obálce'));
+    const c = project.client;
+    const clientLabel = el('label', { class: 'btn btn--ghost btn--small' }, c.logoId ? 'Vyměnit logo zákazníka' : 'Nahrát logo zákazníka');
+    const clientInput = el('input', { type: 'file', accept: 'image/*' });
+    clientInput.style.display = 'none';
+    clientInput.onchange = () => {
+      const f = clientInput.files?.[0];
+      if (f) setClientLogo(f);
+    };
+    clientLabel.append(clientInput);
+    const clientRow = el('div', { class: 'actions' });
+    clientRow.append(clientLabel);
+    if (c.logoId) {
+      const rmLogo = el('button', { class: 'btn btn--ghost btn--small' }, 'Odebrat logo');
+      rmLogo.onclick = async () => {
+        c.logoId = undefined;
+        saveProject(project);
+        await pruneImages(project);
+        paint();
+      };
+      clientRow.append(rmLogo);
+    }
+    side.append(clientRow);
+    side.append(
+      field('Text pod logem', textarea(c.text ?? '', (v) => ((c.text = v), commit()))),
+      field(`Výška loga · ${c.logoHeight} mm`, range(c.logoHeight, 8, 40, (v) => ((c.logoHeight = v), commit()))),
+      check('Bílá plocha pod logem', c.plate, (v) => ((c.plate = v), commit())),
+      el('p', { class: 'hint' }, 'Logo a text se vysází na obálku doprostřed dole, mezi logo Fus Boba a adresu webu. Bez loga i textu zůstane obálka beze změny.')
+    );
+
     side.append(el('h3', {}, 'Tisková data'));
     side.append(
       field('Spadávka (mm)', input('number', String(project.print.bleed), (v) => ((project.print.bleed = Number(v) || 0), commit()))),
@@ -235,8 +265,9 @@ export function calendarPage(root: HTMLElement): () => void {
   async function paintPreview(preview: HTMLElement): Promise<void> {
     const slot = project.slots[active];
     const url = slot.imageId ? await getImageUrl(slot.imageId) : undefined;
+    const clientLogoUrl = project.client.logoId ? await getImageUrl(project.client.logoId) : undefined;
     // náhled = formát včetně spadávky (bez ořezových značek), čistý formát je naznačen čárkovanou linkou
-    const sheet = renderSheet(project, slot, url, false);
+    const sheet = renderSheet(project, slot, url, false, { clientLogoUrl });
     const gp = geometry(project, false);
     const scale = preview.clientWidth / (gp.sheetW * PX_PER_MM);
     preview.style.height = `${gp.sheetH * PX_PER_MM * scale}px`;
@@ -277,6 +308,15 @@ export function calendarPage(root: HTMLElement): () => void {
   }
 
   /** Doplní rozměry a průměrnou barvu fotky do slotu (u starších projektů chybí). */
+  async function setClientLogo(file: File): Promise<void> {
+    if (!file.type.startsWith('image/')) return;
+    project.client.logoId = await putImage(file);
+    saveProject(project);
+    await pruneImages(project);
+    active = 0; // přepneme na obálku, ať je změna hned vidět
+    paint();
+  }
+
   async function measure(slot: Slot): Promise<void> {
     if (!slot.imageId) return;
     const url = await getImageUrl(slot.imageId);
@@ -401,6 +441,13 @@ function range(value: number, min: number, max: number, onChange: (v: number) =>
   const i = el('input', { type: 'range', min: String(min), max: String(max), step: String(step), value: String(value) });
   i.oninput = () => onChange(Number(i.value));
   return i;
+}
+
+function textarea(value: string, onChange: (v: string) => void): HTMLTextAreaElement {
+  const t = el('textarea', { rows: '3' });
+  t.value = value;
+  t.onchange = () => onChange(t.value);
+  return t;
 }
 
 function select(options: [string, string][], value: string, onChange: (v: string) => void): HTMLSelectElement {
