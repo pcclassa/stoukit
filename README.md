@@ -67,7 +67,7 @@ src/
     editor.ts          UI editoru
     print.ts           tiskový pohled
   styles/              base.css (brand), calendar.css
-public/brand/          pebble.svg (značka), fusbobo-logo*.png (logo hnědé/bílé), fusbobo-figura.webp, uska.webp, pozadi.jpg, ukazka-*.jpg
+public/brand/          pebble.svg (značka), fusbobo-logo*.png (logo hnědé/bílé, čistá alfa), fusbobo-figura.webp, uska.webp, pozadi.jpg, ukazka-*.jpg
 ```
 
 ## Vizuální identita
@@ -79,6 +79,9 @@ obrázky (pozadí, Ůska, figura Fus Boba, ukázky) v `public/brand/`.
 
 ## Verze
 
+- **1.1.1** (18. 9. 2026) – logo Fus Boba překresleno z originálu s čistou průhledností (dřív mělo
+  kolem sebe patrný obdélníkový závoj z šumu v alfa kanálu), v tiskovém pohledu přibyl návod
+  na nastavení tiskového dialogu.
 - **1.1** (18. 9. 2026) – zmenšení fotky pod plný formát s výplní okolo (rozmazaná fotka / barva / bílá),
   umístění fotky počítané v mm, uložení a načtení projektu včetně fotek (`.stoukit`).
 - **1.0** (13. 9. 2026) – editor kalendáře, náhledy, tisková data A3 se spadávkou a ořezovými značkami.

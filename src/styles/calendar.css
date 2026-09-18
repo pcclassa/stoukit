@@ -494,6 +494,34 @@
 }
 
 /* ---------- Tiskový výstup ---------- */
+.print-help {
+  max-width: 720px;
+  margin: 18px auto 0;
+  padding: 18px 22px;
+  background: var(--card-bg);
+  border: var(--card-border);
+  border-radius: var(--radius);
+  box-shadow: var(--card-shadow);
+  font-size: 0.92rem;
+  color: var(--text);
+}
+
+.print-help ul {
+  margin: 8px 0;
+  padding-left: 20px;
+}
+
+.print-help li {
+  margin-bottom: 2px;
+}
+
+.print-help span {
+  display: block;
+  margin-top: 6px;
+  font-size: 0.84rem;
+  color: var(--text-muted);
+}
+
 .print-root {
   background: #777;
   padding: 10mm;
@@ -522,6 +550,7 @@
   }
 
   .print-toolbar,
+  .print-help,
   .topbar {
     display: none !important;
   }

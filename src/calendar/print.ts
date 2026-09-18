@@ -20,8 +20,22 @@ export function printPage(root: HTMLElement): () => void {
   print.onclick = () => window.print();
   bar.append(back, print);
 
+  // Návod, aby se arch v tiskovém dialogu neotočil ani nezmenšil na A4
+  const help = el('div', { class: 'print-help' });
+  help.innerHTML = `
+    <strong>Než uložíš PDF, zkontroluj v dialogu prohlížeče:</strong>
+    <ul>
+      <li>Cíl / tiskárna: <b>Uložit jako PDF</b></li>
+      <li>Velikost papíru: <b>${g.sheetW} × ${g.sheetH} mm</b> (vlastní formát), nebo nejbližší větší</li>
+      <li>Orientace: <b>${g.sheetW > g.sheetH ? 'na šířku' : 'na výšku'}</b> – musí odpovídat kalendáři</li>
+      <li>Okraje: <b>Žádné</b> · Měřítko: <b>100 %</b> (ne „Přizpůsobit stránce“)</li>
+      <li>Zapnout <b>Grafika na pozadí</b></li>
+    </ul>
+    <span>Když se v náhledu dialogu strana otočí nebo kolem ní vznikne bílý rám, sedí špatně
+    papír nebo měřítko – tisková data by pak nešla oříznout na čistý formát.</span>`;
+
   const wrap = el('div', { class: 'print-root' });
-  root.append(bar, wrap);
+  root.append(bar, help, wrap);
 
   (async () => {
     for (const slot of project.slots) {
