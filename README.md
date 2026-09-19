@@ -89,7 +89,7 @@ src/
     editor.ts          UI editoru
     print.ts           tiskový pohled
   styles/              base.css (brand), calendar.css
-public/brand/          pebble.svg (značka), fusbobo-logo*.png (logo hnědé/bílé, čistá alfa), fusbobo-figura.webp, uska.webp, pozadi.jpg, ukazka-*.jpg
+public/brand/          pebble.svg (značka), fusbobo-logo*.svg (vektor: hnědé/bílé/černé/currentColor), fusbobo-logo*.png (rastr), fusbobo-figura.webp, uska.webp, pozadi.jpg, ukazka-*.jpg
 ```
 
 ## Vizuální identita
@@ -101,6 +101,9 @@ obrázky (pozadí, Ůska, figura Fus Boba, ukázky) v `public/brand/`.
 
 ## Verze
 
+- **1.4.1** (19. 9. 2026) – logo Fus Boba převedeno do vektoru (SVG, průhledné pozadí) a použito
+  v hlavičce i na obálce, takže je v tisku ostré v jakékoli velikosti; opraveno vyplnění oček
+  písmen (B, o, b, o měly dřív plné břicho).
 - **1.4** (18. 9. 2026) – volitelné logo a text zákazníka ve vyhrazeném prostoru uprostřed dole
   na obálce (výška loga, bílá plocha pod logem, víceřádkový text); logo jde i do souboru `.stoukit`.
 - **1.2** (18. 9. 2026) – nastavitelná barva podkladu listu (pipeta + vzorník), výplň okolo fotky

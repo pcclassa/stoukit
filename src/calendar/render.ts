@@ -206,7 +206,7 @@ function coverBody(p: CalendarProject, clientLogoUrl?: string): HTMLElement {
     </div>
     <div class="cal-cover__brand">
       <span class="cal-cover__side cal-cover__side--left">
-        <img class="cal-cover__fusbobo" src="./brand/fusbobo-logo-white.png" alt="Fus Bobo" />
+        <img class="cal-cover__fusbobo" src="./brand/fusbobo-logo-white.svg" alt="Fus Bobo" />
       </span>
       ${clientBlock(p, clientLogoUrl)}
       <span class="cal-cover__side cal-cover__side--right">www.stouniky.com</span>
