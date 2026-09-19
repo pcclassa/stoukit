@@ -8,7 +8,7 @@
     </a>
     <a class="photographer" href="https://stouniky.com" target="_blank" rel="noopener">
       <span class="photographer__label">Fotograf</span>
-      <img class="photographer__logo" src="./brand/fusbobo-logo.png" alt="Fus Bobo – logo fotografa" />
+      <img class="photographer__logo" src="./brand/fusbobo-logo.svg" alt="Fus Bobo – logo fotografa" />
     </a>`,t.append(o,s,a,e),n.figure){const i=document.createElement("figure");i.className="bobo-fig",i.innerHTML='<img src="./brand/fusbobo-figura.webp" alt="Fus Bobo, kamínek s kaštanovými vlasy a fotoaparátem" />',t.append(i)}}function d(t,e={},n=""){const o=document.createElement(t);for(const[s,a]of Object.entries(e))o.setAttribute(s,a);return n&&(o.innerHTML=n),o}function we(t){const e=d("main",{class:"page"});e.innerHTML=`
     <section class="card card--intro">
       <h1>Stouniky product toolkit</h1>
@@ -53,7 +53,7 @@
     </div>
     <div class="cal-cover__brand">
       <span class="cal-cover__side cal-cover__side--left">
-        <img class="cal-cover__fusbobo" src="./brand/fusbobo-logo-white.png" alt="Fus Bobo" />
+        <img class="cal-cover__fusbobo" src="./brand/fusbobo-logo-white.svg" alt="Fus Bobo" />
       </span>
       ${De(t,e)}
       <span class="cal-cover__side cal-cover__side--right">www.stouniky.com</span>
