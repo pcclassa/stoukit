@@ -101,6 +101,8 @@ obrázky (pozadí, Ůska, figura Fus Boba, ukázky) v `public/brand/`.
 
 ## Verze
 
+- **1.4.2** (29. 9. 2026) – z náhledu zmizel obdélníkový rámeček ořezu, který se přes stranu
+  (nejvíc patrný na obálce) tvářil jako součást grafiky; ořez teď ukazují jen čtyři rohové značky.
 - **1.4.1** (19. 9. 2026) – logo Fus Boba převedeno do vektoru (SVG, průhledné pozadí) a použito
   v hlavičce i na obálce, takže je v tisku ostré v jakékoli velikosti; opraveno vyplnění oček
   písmen (B, o, b, o měly dřív plné břicho).

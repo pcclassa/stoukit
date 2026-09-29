@@ -21,12 +21,46 @@
   flex-direction: column;
 }
 
-/* ořez v náhledu */
+/* ořez v náhledu – jen rohové značky, žádný rámeček přes stranu */
 .cal-trim {
   position: absolute;
   inset: var(--bleed);
-  border: 0.3mm dashed rgba(217, 139, 58, 0.6);
   pointer-events: none;
+}
+
+.cal-trim i {
+  position: absolute;
+  width: 9mm;
+  height: 9mm;
+  border: 0 solid rgba(217, 139, 58, 0.75);
+}
+
+.cal-trim i:nth-child(1) {
+  left: 0;
+  top: 0;
+  border-left-width: 0.3mm;
+  border-top-width: 0.3mm;
+}
+
+.cal-trim i:nth-child(2) {
+  right: 0;
+  top: 0;
+  border-right-width: 0.3mm;
+  border-top-width: 0.3mm;
+}
+
+.cal-trim i:nth-child(3) {
+  left: 0;
+  bottom: 0;
+  border-left-width: 0.3mm;
+  border-bottom-width: 0.3mm;
+}
+
+.cal-trim i:nth-child(4) {
+  right: 0;
+  bottom: 0;
+  border-right-width: 0.3mm;
+  border-bottom-width: 0.3mm;
 }
 
 .cal-marks i {

@@ -189,6 +189,7 @@ export function renderSheet(
   if (!forPrint) {
     const trim = document.createElement('div');
     trim.className = 'cal-trim';
+    trim.innerHTML = '<i></i><i></i><i></i><i></i>';
     page.append(trim);
   }
 
